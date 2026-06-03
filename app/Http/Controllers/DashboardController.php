@@ -16,11 +16,29 @@ class DashboardController extends Controller
             today()
         )->count();
 
+        $todayAttendances = Attendance::with('user')
+            ->whereDate('date', today())
+            ->latest()
+            ->get();
+
+        if(auth()->user()->role == 'admin')
+        {
+            return view(
+                'admin.dashboard',
+                compact(
+                    'totalUsers',
+                    'todayAttendance',
+                    'todayAttendances'
+                )
+            );
+        }
+
         return view(
-            'dashboard',
+            'user.dashboard',
             compact(
                 'totalUsers',
-                'todayAttendance'
+                'todayAttendance',
+                'todayAttendances'
             )
         );
     }

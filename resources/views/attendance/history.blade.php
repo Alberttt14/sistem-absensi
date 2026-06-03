@@ -30,6 +30,9 @@
                 <thead class="bg-gray-50">
 
                     <tr>
+                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">
+                            Nama
+                        </th>
 
                         <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">
                             Tanggal
@@ -53,46 +56,17 @@
 
                 <tbody class="divide-y divide-gray-200">
 
-                    @forelse($attendances as $attendance)
+                    @foreach($attendances as $attendance)
 
-                    <tr class="hover:bg-gray-50">
+                        <tr>
+                            <td>{{ $attendance->user->name }}</td>
+                            <td>{{ \Carbon\Carbon::parse($attendance->date)->format('d-m-Y') }}</td>
+                            <td>{{ $attendance->check_in }}</td>
+                            <td>{{ $attendance->check_out ? \Carbon\Carbon::parse($attendance->check_out)->format('H:i:s') : '-' }}</td>
+                            <td>{{ $attendance->status }}</td>
+                        </tr>
 
-                        <td class="px-6 py-4">
-                            {{ $attendance->date }}
-                        </td>
-
-                        <td class="px-6 py-4">
-                            {{ $attendance->check_in }}
-                        </td>
-
-                        <td class="px-6 py-4">
-                            {{ $attendance->check_out ?? '-' }}
-                        </td>
-
-                        <td class="px-6 py-4">
-
-                            <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm">
-                                {{ $attendance->status }}
-                            </span>
-
-                        </td>
-
-                    </tr>
-
-                    @empty
-
-                    <tr>
-
-                        <td colspan="4"
-                            class="text-center py-8 text-gray-500">
-
-                            Belum ada data absensi
-
-                        </td>
-
-                    </tr>
-
-                    @endforelse
+                    @endforeach
 
                 </tbody>
 

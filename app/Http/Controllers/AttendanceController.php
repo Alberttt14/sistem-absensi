@@ -10,24 +10,25 @@ use Maatwebsite\Excel\Facades\Excel;
 class AttendanceController extends Controller
 {
     public function checkIn()
-    {
-        $attendance = Attendance::where('user_id', auth()->id())
-            ->whereDate('date', today())
-            ->first();
+{
+    $attendance = Attendance::where('user_id', auth()->id())
+        ->whereDate('date', today())
+        ->first();
 
-        if (!$attendance) {
+    if (!$attendance) {
 
-            Attendance::create([
-                'user_id' => auth()->id(),
-                'date' => today(),
-                'check_in' => now()->format('H:i:s'),
-                'status' => 'Hadir'
-            ]);
+        Attendance::create([
+            'user_id' => auth()->id(),
+            'date' => today(),
+            'check_in' => now()->format('H:i:s'),
+            'status' => 'Hadir'
+        ]);
 
-        }
-
-        return back();
+        return back()->with('success', 'Berhasil Check In');
     }
+
+    return back()->with('error', 'Anda sudah melakukan Check In hari ini');
+}
 
     public function checkOut()
     {
@@ -47,12 +48,22 @@ class AttendanceController extends Controller
 
     public function history()
     {
-        $attendances = Attendance::where(
-            'user_id',
-            auth()->id()
-        )
-        ->latest()
-        ->paginate(10);
+        if(auth()->user()->role == 'admin')
+        {
+            $attendances = Attendance::with('user')
+                ->latest()
+                ->paginate(10);
+        }
+        else
+        {
+            $attendances = Attendance::with('user')
+                ->where(
+                    'user_id',
+                    auth()->id()
+                )
+                ->latest()
+                ->paginate(10);
+        }
 
         return view(
             'attendance.history',
@@ -62,6 +73,11 @@ class AttendanceController extends Controller
 
     public function exportExcel()
     {
+        if(auth()->user()->role != 'admin')
+        {
+            abort(403);
+        }
+
         return Excel::download(
             new AttendanceExport,
             'absensi.xlsx'

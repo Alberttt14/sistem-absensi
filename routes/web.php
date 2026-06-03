@@ -39,11 +39,20 @@ Route::middleware('auth')->group(function () {
         ->name('profile.destroy');
 });
 
-Route::middleware(['auth', 'admin'])->group(function () {
+Route::middleware([
+    'auth',
+    'admin'
+])->group(function () {
 
-    Route::resource('employees', EmployeeController::class);
+    Route::resource(
+        'employees',
+        EmployeeController::class
+    );
 
-    Route::resource('divisions', DivisionController::class);
+    Route::resource(
+        'divisions',
+        DivisionController::class
+    );
 
 });
 
